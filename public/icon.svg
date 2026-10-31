@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+    <linearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fed7aa"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#7c2d12" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="512" height="512" rx="128" fill="url(#bg)"/>
+
+  <!-- Cat Silhouette -->
+  <g filter="url(#shadow)">
+    <!-- Ears -->
+    <polygon points="140,240 190,130 240,210" fill="#f97316"/>
+    <polygon points="160,230 190,150 220,210" fill="#f472b6"/>
+    
+    <polygon points="372,240 322,130 272,210" fill="#f97316"/>
+    <polygon points="352,230 322,150 292,210" fill="#f472b6"/>
+
+    <!-- Head -->
+    <ellipse cx="256" cy="270" rx="140" ry="120" fill="url(#fur)"/>
+    <ellipse cx="256" cy="300" rx="70" ry="50" fill="#fef3c7"/>
+
+    <!-- Cheeks Fluff -->
+    <circle cx="160" cy="300" r="24" fill="#f472b6" opacity="0.6"/>
+    <circle cx="352" cy="300" r="24" fill="#f472b6" opacity="0.6"/>
+
+    <!-- Eyes (Big Cute Manga Eyes) -->
+    <ellipse cx="205" cy="260" rx="20" ry="26" fill="#18181b"/>
+    <circle cx="198" cy="250" r="8" fill="#ffffff"/>
+    <circle cx="212" cy="270" r="4" fill="#ffffff"/>
+
+    <ellipse cx="307" cy="260" rx="20" ry="26" fill="#18181b"/>
+    <circle cx="300" cy="250" r="8" fill="#ffffff"/>
+    <circle cx="314" cy="270" r="4" fill="#ffffff"/>
+
+    <!-- Nose & Mouth -->
+    <polygon points="256,288 248,278 264,278" fill="#e11d48"/>
+    <path d="M 246,294 Q 256,304 266,294" fill="none" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Little Fish Coin Badge in Paw -->
+    <g transform="translate(320, 340)">
+      <circle cx="36" cy="36" r="44" fill="#fef08a" stroke="#d97706" stroke-width="6"/>
+      <text x="36" y="48" font-size="44" text-anchor="middle" font-weight="bold">🐟</text>
+    </g>
+  </g>
+</svg>
