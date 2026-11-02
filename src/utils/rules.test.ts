@@ -1,6 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateLocalEffortFallback, feedCat, completeTask, petCat, isCatHungry } from './rules';
+import {
+  calculateLocalEffortFallback,
+  feedCat,
+  completeTask,
+  petCat,
+  isCatHungry,
+  rescueFeedStrayCat,
+  extractInterestTags,
+} from './rules';
 import { CatState, FOOD_ITEMS } from '../types/cat';
 import { TodoItem } from '../types/todo';
 
@@ -86,3 +94,39 @@ test('isCatHungry correctly detects low fullness', () => {
   assert.equal(isCatHungry({ ...initialCat, fullness: 20 }), true);
   assert.equal(isCatHungry({ ...initialCat, fullness: 80 }), false);
 });
+
+test('rescueFeedStrayCat deducts rescuer coins, restores fullness and grants karma', () => {
+  const result = rescueFeedStrayCat(50, 15);
+  assert.equal(result.success, true);
+  assert.equal(result.newRescuerCoins, 40);
+  assert.equal(result.newTargetFullness, 50);
+  assert.equal(result.karmaEarned, 1);
+
+  const poorRescuer = rescueFeedStrayCat(5, 10);
+  assert.equal(poorRescuer.success, false);
+  assert.equal(poorRescuer.newRescuerCoins, 5);
+});
+
+test('extractInterestTags finds tags from todo titles', () => {
+  const todos: TodoItem[] = [
+    {
+      id: '1',
+      title: '리액트 컴포넌트 코딩 및 개발',
+      completed: false,
+      createdAt: 0,
+      analysis: { difficulty: 'medium', difficultyLabel: '', effortValue: 30, rationale: '', catComment: '' }
+    },
+    {
+      id: '2',
+      title: '아침 러닝 5km 운동 오운완',
+      completed: false,
+      createdAt: 0,
+      analysis: { difficulty: 'medium', difficultyLabel: '', effortValue: 30, rationale: '', catComment: '' }
+    }
+  ];
+
+  const tags = extractInterestTags(todos);
+  assert.ok(tags.includes('#개발자'));
+  assert.ok(tags.includes('#오운완'));
+});
+

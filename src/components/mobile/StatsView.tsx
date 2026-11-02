@@ -151,7 +151,65 @@ export const StatsView: React.FC<StatsViewProps> = ({
         </div>
       </div>
 
-      {/* 4. Encouragement Callout */}
+      {/* 4. Social Park & Kindness Karma Card */}
+      <div className="bg-white rounded-3xl p-5 border border-stone-200 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="font-extrabold text-sm text-stone-900 flex items-center gap-1.5">
+            <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
+            <span>광장 소셜 활동 & 선행 카르마</span>
+          </h4>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600">
+            하트 {cat.likesCount || 0}개
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="p-3 bg-amber-50/70 rounded-2xl border border-amber-100 flex items-center gap-2">
+            <span className="text-xl">🌟</span>
+            <div>
+              <div className="text-[10px] text-amber-700 font-semibold">선행 카르마</div>
+              <div className="font-bold text-amber-950 text-sm">
+                {cat.kindnessKarma || 0}회 구조
+              </div>
+            </div>
+          </div>
+          <div className="p-3 bg-rose-50/70 rounded-2xl border border-rose-100 flex items-center gap-2">
+            <span className="text-xl">💌</span>
+            <div>
+              <div className="text-[10px] text-rose-700 font-semibold">응원 쪽지</div>
+              <div className="font-bold text-rose-950 text-sm">
+                광장 우체통 연동
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-stone-100">
+          <div className="text-[11px] font-semibold text-stone-500 mb-1 flex items-center justify-between">
+            <span>내 ToDo 기반 공개 관심사</span>
+            <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">
+              {cat.isPublicInterests !== false ? '공개 중' : '비공개'}
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-1.5 mt-1.5">
+            {(cat.interests && cat.interests.length > 0 ? cat.interests : ['#성실집사', '#고양이사랑']).map(
+              (tag, idx) => (
+                <span
+                  key={idx}
+                  className="px-2.5 py-1 bg-stone-100 text-stone-700 text-xs font-medium rounded-lg border border-stone-200"
+                >
+                  {tag}
+                </span>
+              )
+            )}
+          </div>
+          <p className="text-[10px] text-stone-400 mt-2">
+            💡 할일 등록 시 AI가 집사님의 관심사를 자동으로 분석하여 산책 광장에 표현해 줍니다.
+          </p>
+        </div>
+      </div>
+
+      {/* 5. Encouragement Callout */}
       <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-3xl border border-amber-200/90 text-xs text-stone-700 flex items-center gap-3">
         <Trophy className="w-8 h-8 text-amber-500 shrink-0" />
         <div>

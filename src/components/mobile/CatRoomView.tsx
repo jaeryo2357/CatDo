@@ -187,9 +187,9 @@ export const CatRoomView: React.FC<CatRoomViewProps> = ({
             onClick={onGoToPark}
             className="w-full py-2 px-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-xs shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 active:scale-98 transition-all cursor-pointer"
           >
-            <span>🌸</span>
-            <span>다른 냥이들과 온라인 산책 나가기</span>
-            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full font-bold">실시간</span>
+            <span>🌿</span>
+            <span>냥이 광장 & 놀이터 산책 나가기</span>
+            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full font-bold">실시간 광장</span>
           </button>
         )}
 

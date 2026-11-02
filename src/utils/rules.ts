@@ -213,3 +213,68 @@ export function completeTask(
 export function isCatHungry(cat: CatState): boolean {
   return cat.fullness <= 30;
 }
+
+/**
+ * Rescues a hungry stray/neighbor cat by feeding them a snack.
+ * Costs rescuer 10 coins, restores 35 fullness to the hungry cat, and rewards karma.
+ */
+export function rescueFeedStrayCat(
+  rescuerCoins: number,
+  targetFullness: number
+): { success: boolean; newRescuerCoins: number; newTargetFullness: number; karmaEarned: number; message: string } {
+  const SNACK_COST = 10;
+  if (rescuerCoins < SNACK_COST) {
+    return {
+      success: false,
+      newRescuerCoins: rescuerCoins,
+      newTargetFullness: targetFullness,
+      karmaEarned: 0,
+      message: '멸치 코인이 부족합니다! (10캔 필요)',
+    };
+  }
+
+  const newTargetFullness = Math.min(100, targetFullness + 35);
+  return {
+    success: true,
+    newRescuerCoins: rescuerCoins - SNACK_COST,
+    newTargetFullness,
+    karmaEarned: 1,
+    message: '배고픈 고양이에게 맛있는 간식을 챙겨주었습니다! 🌟 따뜻한 선행 카르마 +1',
+  };
+}
+
+/**
+ * Automatically extracts butler's interest tags from their Todo items.
+ */
+export function extractInterestTags(todos: TodoItem[]): string[] {
+  const tags = new Set<string>();
+  for (const todo of todos) {
+    const text = `${todo.title} ${todo.detail || ''}`.toLowerCase();
+    if (text.includes('코딩') || text.includes('개발') || text.includes('프로그래밍') || text.includes('code') || text.includes('git')) {
+      tags.add('#개발자');
+    }
+    if (text.includes('운동') || text.includes('스트레칭') || text.includes('헬스') || text.includes('러닝') || text.includes('오운완')) {
+      tags.add('#오운완');
+    }
+    if (text.includes('공부') || text.includes('독서') || text.includes('책') || text.includes('시험') || text.includes('자격증')) {
+      tags.add('#열공독서');
+    }
+    if (text.includes('영어') || text.includes('회화') || text.includes('일본어') || text.includes('토익')) {
+      tags.add('#외국어마스터');
+    }
+    if (text.includes('청소') || text.includes('정리') || text.includes('빨래') || text.includes('분리수거')) {
+      tags.add('#미니멀라이프');
+    }
+    if (text.includes('물') || text.includes('영양제') || text.includes('수면') || text.includes('명상')) {
+      tags.add('#웰빙케어');
+    }
+  }
+
+  if (tags.size === 0) {
+    tags.add('#성실집사');
+    tags.add('#고양이사랑');
+  }
+
+  return Array.from(tags).slice(0, 4);
+}
+

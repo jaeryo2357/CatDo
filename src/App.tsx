@@ -3,21 +3,18 @@ import { CatAccessory, CatBreedId, CatState, FoodShopItem } from './types/cat';
 import { TodoItem } from './types/todo';
 import { AdoptionModal } from './components/cat3d/AdoptionModal';
 import { AddTodoModal } from './components/todo/AddTodoModal';
-import { PWAInstallButton } from './components/pwa/PWAInstallButton';
 import { MobileTabBar, MobileTab } from './components/mobile/MobileTabBar';
 import { TodoMobileView } from './components/mobile/TodoMobileView';
 import { CatRoomView } from './components/mobile/CatRoomView';
 import { ShopView } from './components/mobile/ShopView';
 import { StatsView } from './components/mobile/StatsView';
 import { CatParkView } from './components/park/CatParkView';
-import { completeTask, feedCat, petCat, isCatHungry } from './utils/rules';
+import { completeTask, feedCat, petCat, isCatHungry, extractInterestTags } from './utils/rules';
 import { playSound } from './utils/audio';
 import {
   Sparkles,
   Plus,
   RotateCcw,
-  Smartphone,
-  Monitor,
   Heart,
   Volume2,
   VolumeX,
@@ -83,7 +80,6 @@ export default function App() {
   const [isAdoptionOpen, setIsAdoptionOpen] = useState(false);
   const [isAddTodoOpen, setIsAddTodoOpen] = useState(false);
   const [bannerAlert, setBannerAlert] = useState<string | null>(null);
-  const [isWideLayout, setIsWideLayout] = useState(false);
 
   // Initialize data on mount
   useEffect(() => {
@@ -287,83 +283,87 @@ export default function App() {
     setTodos(todos.filter((t) => t.id !== id));
   };
 
+  // 10. Toggle Todo Importance (Star)
+  const handleToggleImportant = (id: string) => {
+    setTodos(
+      todos.map((t) => (t.id === id ? { ...t, isImportant: !t.isImportant } : t))
+    );
+  };
+
+  // 11. Update Todo Title/Detail
+  const handleUpdateTodo = (id: string, updates: Partial<TodoItem>) => {
+    setTodos(
+      todos.map((t) => (t.id === id ? { ...t, ...updates } : t))
+    );
+    showBanner('할일 내용이 저장되었습니다.');
+  };
+
+  // 12. Clear Completed Todos
+  const handleClearCompletedTodos = () => {
+    const completedCount = todos.filter((t) => t.completed).length;
+    if (completedCount === 0) return;
+    setTodos(todos.filter((t) => !t.completed));
+    showBanner(`완료된 할일 ${completedCount}개를 목록에서 정리했습니다.`);
+  };
+
   const pendingTasksCount = todos.filter((t) => !t.completed).length;
   const hungry = cat ? isCatHungry(cat) : false;
 
   return (
     <div className="min-h-screen bg-stone-900 flex flex-col justify-center items-center sm:py-6 sm:px-4 text-stone-800 antialiased selection:bg-amber-200">
       {/* Outer Desktop Device Shell Container */}
-      <div
-        className={`w-full flex flex-col bg-stone-50 relative overflow-hidden transition-all duration-300 ${
-          isWideLayout
-            ? 'max-w-4xl h-screen sm:h-[900px] sm:max-h-[94vh] sm:rounded-3xl sm:shadow-2xl border-stone-800/80'
-            : 'max-w-md h-screen sm:h-[860px] sm:max-h-[92vh] sm:rounded-[40px] sm:shadow-2xl sm:border-[8px] sm:border-stone-800'
-        }`}
-      >
-        {/* Android Smartphone Top Notch / Speaker Indicator (visible on desktop frame) */}
-        {!isWideLayout && (
-          <div className="hidden sm:flex items-center justify-center pt-2.5 pb-1 bg-stone-800">
-            <div className="w-16 h-1 bg-stone-600 rounded-full" />
-            <div className="w-2.5 h-2.5 rounded-full bg-stone-700 ml-3" />
-          </div>
-        )}
+      <div className="w-full max-w-md h-screen sm:h-[860px] sm:max-h-[92vh] sm:rounded-[40px] sm:shadow-2xl sm:border-[8px] sm:border-stone-800 flex flex-col bg-stone-50 relative overflow-hidden transition-all duration-300">
+        {/* Android Smartphone Top Notch / Speaker Indicator (visible on desktop preview) */}
+        <div className="hidden sm:flex items-center justify-center pt-2.5 pb-1 bg-stone-800">
+          <div className="w-16 h-1 bg-stone-600 rounded-full" />
+          <div className="w-2.5 h-2.5 rounded-full bg-stone-700 ml-3" />
+        </div>
 
         {/* Mobile Top App Bar */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200 px-3.5 py-2.5 flex items-center justify-between shadow-xs">
-          {/* Logo & Brand */}
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200/80 px-3.5 py-2 flex items-center justify-between">
+          {/* Left Contextual Title */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-base text-white shadow-xs">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-xs text-white shadow-2xs font-black">
               🐾
             </div>
             <div>
               <h1 className="font-extrabold text-sm tracking-tight text-stone-900 leading-none">
-                냥이투두
+                {activeTab === 'todo'
+                  ? '오늘의 할 일'
+                  : activeTab === 'cat'
+                  ? '냥이룸'
+                  : activeTab === 'park'
+                  ? '산책 공원'
+                  : activeTab === 'shop'
+                  ? '간식 상점'
+                  : '집사 기록'}
               </h1>
-              <span className="text-[10px] text-amber-600 font-bold block mt-0.5">
-                CatDo Mobile
-              </span>
+              {activeTab === 'todo' && (
+                <span className="text-[10px] text-stone-400 font-medium block mt-0.5">
+                  {new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}
+                  {pendingTasksCount > 0 ? ` • ${pendingTasksCount}개 남음` : ' • 모두 완료!'}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Right Header Status Badges */}
+          {/* Right Header: Cat & Coins Status Pill */}
           <div className="flex items-center gap-1.5">
             {cat && (
-              <>
-                {/* Cat Quick Pill */}
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('cat')}
-                  className="flex items-center gap-1 px-2 py-1 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-xs font-bold text-amber-900 transition-colors cursor-pointer"
-                  title="고양이 방으로 이동"
-                >
-                  <span>🐱</span>
-                  <span className="text-[11px]">{cat.name} Lv.{cat.level}</span>
-                </button>
-
-                {/* Coin Badge */}
-                <div
-                  onClick={() => setActiveTab('shop')}
-                  className="flex items-center gap-1 px-2 py-1 rounded-xl bg-amber-100/90 border border-amber-300 text-xs font-black text-amber-900 shadow-xs cursor-pointer hover:bg-amber-200 transition-colors"
-                  title="간식 상점으로 이동"
-                >
-                  <span className="text-xs">🐟</span>
-                  <span className="text-[11px]">{cat.coins}</span>
-                </div>
-              </>
+              <button
+                type="button"
+                onClick={() => setActiveTab('cat')}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 hover:bg-amber-100/80 border border-amber-200 text-xs font-bold text-amber-900 transition-colors cursor-pointer shadow-2xs"
+                title="고양이 방으로 이동"
+              >
+                <span>🐱 {cat.name}</span>
+                <span className="text-amber-300">|</span>
+                <span className="flex items-center gap-0.5">
+                  <span>🐟</span>
+                  <span>{cat.coins}</span>
+                </span>
+              </button>
             )}
-
-            {/* PWA Install Button */}
-            <PWAInstallButton />
-
-            {/* Desktop Frame Mode Switch (Mobile / Wide) */}
-            <button
-              type="button"
-              onClick={() => setIsWideLayout(!isWideLayout)}
-              className="hidden sm:flex p-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-600 transition-colors cursor-pointer"
-              title={isWideLayout ? '스마트폰 화면 크기로 보기' : '태블릿/와이드 화면으로 보기'}
-            >
-              {isWideLayout ? <Smartphone className="w-3.5 h-3.5" /> : <Monitor className="w-3.5 h-3.5" />}
-            </button>
           </div>
         </header>
 
@@ -386,6 +386,9 @@ export default function App() {
                   onToggleComplete={handleToggleTodo}
                   onDelete={handleDeleteTodo}
                   onAddTodo={handleAddTodo}
+                  onToggleImportant={handleToggleImportant}
+                  onUpdateTodo={handleUpdateTodo}
+                  onClearCompleted={handleClearCompletedTodos}
                   onOpenAddModal={() => setIsAddTodoOpen(true)}
                   onJumpToCatRoom={() => setActiveTab('cat')}
                 />
@@ -407,8 +410,15 @@ export default function App() {
 
               {activeTab === 'park' && (
                 <CatParkView
-                  cat={cat}
+                  cat={{
+                    ...cat,
+                    interests:
+                      cat.interests && cat.interests.length > 0
+                        ? cat.interests
+                        : extractInterestTags(todos),
+                  }}
                   onBackToRoom={() => setActiveTab('cat')}
+                  onUpdateCatState={(updater) => setCat((prev) => (prev ? updater(prev) : null))}
                 />
               )}
 
@@ -452,18 +462,6 @@ export default function App() {
           )}
         </div>
 
-        {/* Floating Action Button (FAB) on ToDo Tab */}
-        {cat && activeTab === 'todo' && (
-          <button
-            type="button"
-            onClick={() => setIsAddTodoOpen(true)}
-            className="absolute bottom-20 right-4 z-30 w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/35 hover:scale-105 active:scale-95 transition-all cursor-pointer"
-            title="새 할일 등록 및 AI 노력 분석"
-          >
-            <Plus className="w-6 h-6 stroke-[2.5]" />
-          </button>
-        )}
-
         {/* Bottom Android Navigation Bar */}
         {cat && (
           <MobileTabBar
@@ -477,7 +475,7 @@ export default function App() {
 
       {/* Desktop Ambient Helper Footnote */}
       <div className="hidden sm:flex items-center gap-3 text-stone-400 text-xs mt-3 font-medium">
-        <span>📱 안드로이드 앱 UI/UX 모드 (PWA 지원)</span>
+        <span>📱 안드로이드 모바일 앱 화면 (Play Store 기준)</span>
         <span>•</span>
         <span>하단 탭바를 눌러 냥이룸/할일/상점을 이동하세요</span>
       </div>

@@ -330,4 +330,44 @@ export const playSound = {
       });
     } catch {}
   },
+
+  /**
+   * Feeding munch snack sound alias
+   */
+  chew: () => {
+    playSound.munch();
+  },
+
+  /**
+   * Feed success chime
+   */
+  feedSuccess: () => {
+    playSound.zenChime();
+  },
+
+  /**
+   * Gentle soft error bump
+   */
+  error: () => {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(140, now + 0.15);
+
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.18);
+    } catch {}
+  },
 };

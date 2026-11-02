@@ -93,6 +93,13 @@ export interface CatState {
   adoptedAt: number;
   lastFedAt: number;
   lastPetAt: number;
+  // Social Park & Community features
+  likesCount?: number;
+  interests?: string[];
+  isPublicInterests?: boolean;
+  bio?: string;
+  kindnessKarma?: number; // Gained by feeding hungry stray/inactive cats
+  notes?: import('./park').CatNote[];
 }
 
 export interface FoodShopItem {

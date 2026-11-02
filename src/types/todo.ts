@@ -17,6 +17,7 @@ export interface TodoItem {
   detail?: string;
   category: TaskCategory;
   dueDate?: string;
+  isImportant?: boolean;
   completed: boolean;
   completedAt?: number;
   createdAt: number;
