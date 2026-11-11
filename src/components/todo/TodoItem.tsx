@@ -176,46 +176,27 @@ export const TodoItemCard: React.FC<TodoItemCardProps> = ({
                 </p>
               )}
 
-              {/* Productivity Badges Bar */}
-              <div className="flex items-center gap-1.5 flex-wrap mt-2">
-                {/* Category Pill */}
-                <span
-                  className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md border flex items-center gap-1 ${catInfo.color}`}
-                >
-                  <span>{catInfo.icon}</span>
-                  <span>{catInfo.label}</span>
-                </span>
-
-                {/* Effort Fish Reward Chip */}
-                <span
-                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md border flex items-center gap-1 transition-colors ${
-                    todo.completed
-                      ? 'bg-stone-100 text-stone-500 border-stone-200'
-                      : 'bg-amber-100/80 text-amber-900 border-amber-300'
-                  }`}
-                  title="완료 시 획득하는 캔 코인 가치"
-                >
+              {/* Clean Unboxed Metadata Line (Anti-Slop Zero-Pill Discipline) */}
+              <div className="flex items-center gap-1.5 text-[11px] text-stone-500 flex-wrap mt-2">
+                <span className="font-semibold text-stone-700">{catInfo.label}</span>
+                <span aria-hidden="true" className="text-stone-300">·</span>
+                <span className="text-stone-600">{todo.analysis.difficultyLabel}</span>
+                <span aria-hidden="true" className="text-stone-300">·</span>
+                <span className="font-bold text-amber-700 flex items-center gap-0.5">
                   <span>🐟</span>
-                  <span>+{todo.analysis.effortValue} 캔</span>
+                  <span>+{todo.analysis.effortValue}캔</span>
                 </span>
-
-                {/* Difficulty Tag */}
-                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${diffInfo.bg}`}>
-                  {todo.analysis.difficultyLabel}
-                </span>
-
-                {/* AI Review Pill button */}
+                <span aria-hidden="true" className="text-stone-300">·</span>
                 <button
                   type="button"
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="text-[10px] font-medium text-stone-500 hover:text-amber-800 flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-stone-100 transition-colors cursor-pointer"
+                  className="text-stone-500 hover:text-amber-800 font-medium inline-flex items-center gap-0.5 transition-colors cursor-pointer"
                 >
-                  <Sparkles className="w-2.5 h-2.5 text-amber-500" />
-                  <span>AI 분석</span>
+                  <span>{isExpanded ? '냥이 생각 닫기' : '냥이 생각'}</span>
                   {isExpanded ? (
-                    <ChevronUp className="w-2.5 h-2.5" />
+                    <ChevronUp className="w-3 h-3 text-stone-400" />
                   ) : (
-                    <ChevronDown className="w-2.5 h-2.5" />
+                    <ChevronDown className="w-3 h-3 text-stone-400" />
                   )}
                 </button>
               </div>
@@ -267,29 +248,29 @@ export const TodoItemCard: React.FC<TodoItemCardProps> = ({
         )}
       </div>
 
-      {/* Collapsible AI Effort Review & Advice Drawer */}
+      {/* Collapsible Cat Notes & Advice Drawer */}
       {isExpanded && (
-        <div className="px-3.5 pb-3 pt-2 bg-gradient-to-b from-amber-50/60 to-amber-50/20 border-t border-amber-100/80 text-[11px] text-stone-700 space-y-2 animate-fade-in">
-          {/* AI Assessment */}
+        <div className="px-3.5 pb-3.5 pt-2.5 bg-amber-50/40 border-t border-amber-100/70 text-[11px] text-stone-700 space-y-2 animate-fade-in">
+          {/* Encouragement Reflection */}
           <div className="flex items-start gap-1.5">
-            <span className="font-bold text-amber-900 shrink-0">🤖 AI 감정:</span>
+            <span className="font-bold text-amber-900 shrink-0">🐾 집사 응원:</span>
             <span className="text-stone-700 leading-relaxed">{todo.analysis.rationale}</span>
           </div>
 
           {/* Cat Comment */}
-          <div className="p-2 bg-white rounded-xl border border-amber-200/80 flex items-start gap-1.5 shadow-2xs">
+          <div className="p-2.5 bg-white/90 rounded-xl border border-amber-200/60 flex items-start gap-2 shadow-2xs">
             <span className="text-sm shrink-0">🐱</span>
-            <span className="text-amber-900 font-semibold italic leading-relaxed">
+            <span className="text-amber-950 font-medium italic leading-relaxed">
               "{todo.analysis.catComment}"
             </span>
           </div>
 
           {/* Pacing Advice */}
           {todo.analysis.suggestedPacing && (
-            <div className="text-[10px] text-stone-500 flex items-center gap-1">
+            <div className="text-[10px] text-stone-500 flex items-center gap-1.5 pl-0.5">
               <Clock className="w-3 h-3 text-stone-400 shrink-0" />
               <span>
-                <strong>권장 페이스:</strong> {todo.analysis.suggestedPacing}
+                <strong>작업 팁:</strong> {todo.analysis.suggestedPacing}
               </span>
             </div>
           )}

@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
 
 // Initialize Gemini SDK with recommended User-Agent header
 const apiKey = process.env.GEMINI_API_KEY;
@@ -42,26 +42,30 @@ app.post('/api/analyze-task', async (req, res) => {
 
   if (aiClient) {
     try {
-      const prompt = `당신은 귀여운 3D 고양이를 모시는 집사의 일상을 돕는 'AI 노력 가치 감정사'입니다.
-집사가 등록하려는 다음 할일의 난이도와 정신적/육체적 피로도, 집중력 소모를 공정하게 분석하여 '캔/츄르 코인(10 ~ 150)'의 가치를 매겨주세요.
+      const prompt = `당신은 귀여운 반려묘와 함께하는 힐링 투두 앱의 따뜻한 안내자입니다.
+집사가 등록하려는 다음 할일의 난이도와 노력, 집중도를 친근하고 따뜻하게 살펴보고 '캔 보상(10 ~ 150)'을 매겨주세요.
 
 할일 제목: "${title}"
 상세 내용: "${detail || '없음'}"
 카테고리: "${category || 'life'}"
 
-평가 기준:
-1. difficulty: 'easy' (가벼운 일상 루틴 10~40캔), 'medium' (집중 30분 이상 45~80캔), 'hard' (고난도/높은 스트레스/창작 85~120캔), 'extreme' (장시간 마라톤/중요 시험/대규모 마감 125~150캔)
-2. difficultyLabel: 한국어 짧은 수식어 (예: '가벼운 스트레칭', '집중력 풀가동!', '고난도 퀘스트', '전설의 집사 챌린지')
+작성 규칙 (매우 중요):
+- 절대로 '인지적 집중', '유의미한 과업', '감정사', 'AI 분석', '수고를 진솔하게 인정' 같은 딱딱하고 기계적인 AI 말투를 쓰지 마세요.
+- 마치 동물의 숲이나 네코아츠메 같은 따뜻하고 몽글몽글한 힐링 게임 속 안내자처럼 자연스럽고 다정한 한국어로 작성하세요.
+
+평가 항목:
+1. difficulty: 'easy' (가벼운 루틴 10~40캔), 'medium' (집중 과업 45~80캔), 'hard' (고난도 과업 85~120캔), 'extreme' (장시간 마라톤/중요 시험 125~150캔)
+2. difficultyLabel: 친근한 한국어 표현 (예: '가벼운 몸풀기', '집중 몰입!', '도전 과제', '대단한 챌린지')
 3. effortValue: 정수 10 ~ 150
-4. rationale: 왜 이 노력이 가치 있는지, 집사의 심리적/신체적 수고를 진솔하고 따뜻하게 인정해주는 1-2문장의 평가
-5. catComment: 집사의 고양이가 옆에서 꼬리를 흔들며 하는 귀여운 응원 한마디 (반드시 '~다냥!', '~라옹!', '~다옹~' 등 귀여운 고양이 말투 사용)
-6. suggestedPacing: 이 작업을 마칠 때까지 도움이 되는 현실적인 휴식/호흡 팁 1줄`;
+4. rationale: 이 일에 왜 응원이 필요한지 집사의 마음에 공감해주는 따뜻하고 자연스러운 1-2문장
+5. catComment: 고양이가 옆에서 꼬리를 살랑이며 건네는 사랑스러운 응원 한마디 (끝말은 자연스럽게 '~다냥!', '~라옹!', '~다옹~' 사용)
+6. suggestedPacing: 집사에게 도움이 될 현실적인 팁이나 가벼운 휴식 조언 1줄`;
 
       const apiPromise = aiClient.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
-          systemInstruction: '당신은 집사의 생산성을 응원하고 노력을 보상하는 따뜻하고 공정한 고양이 AI 어시스턴트입니다.',
+          systemInstruction: '당신은 집사의 일상을 따뜻하게 응원하고 공감해주는 사랑스러운 고양이 투두 컴패니언입니다. 기계적이거나 딱딱한 문구를 절대로 사용하지 마세요.',
           responseMimeType: 'application/json',
           responseSchema: {
             type: Type.OBJECT,
@@ -123,6 +127,136 @@ app.post('/api/analyze-task', async (req, res) => {
 
   const fallback = calculateLocalEffortFallback(title, detail, category);
   return res.json(fallback);
+});
+
+// AI Multimodal Vision: Real-Time Cat Photo to 3D Model Palette
+app.post('/api/analyze-cat-photo', async (req, res) => {
+  const { photoBase64 } = req.body;
+
+  if (!photoBase64 || typeof photoBase64 !== 'string') {
+    return res.status(400).json({ error: '고양이 사진 데이터가 필요합니다.' });
+  }
+
+  const cleanBase64 = photoBase64.replace(/^data:image\/\w+;base64,/, '');
+
+  if (aiClient) {
+    try {
+      const response = await aiClient.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                inlineData: {
+                  mimeType: 'image/jpeg',
+                  data: cleanBase64,
+                },
+              },
+              {
+                text: `사진 속 고양이를 세심하게 관찰하여 3D 카툰 마스코트 캐릭터로 1:1 재현하기 위한 색상 팔레트와 무늬 특징을 추출해주세요.
+
+반드시 다음 JSON 형식에 맞춰 색상 헥스코드와 특징을 작성해주세요:
+- breedTag: 묘종 또는 무늬 명칭 (예: '치즈 태비', '고등어 태비', '턱시도 냥이', '삼색이', '스노우 화이트', '샴', '러시안 블루', '카오스')
+- suggestedName: 사진 속 인상에 어울리는 사랑스러운 한국어 이름 (예: '망고', '모찌', '오레오', '보리', '루루', '나비')
+- personality: 'foodie' (먹보), 'energetic' (활발), 'cuddly' (애교), 'zen' (도도/느긋) 중 하나
+- primaryColor: 고양이의 주요 털 색상 헥스코드 (예: 치즈는 #f59e0b, 고등어는 #6b7280, 턱시도는 #18181b, 화이트는 #ffffff, 샴/베이지는 #e0d5c1)
+- stripeColor: 줄무늬 또는 포인트 무늬 색상 헥스코드 (줄무늬가 없으면 톤온톤 어두운 색상)
+- bellyColor: 가슴/배/턱 털 색상 헥스코드 (보통 #ffffff 또는 #fef3c7)
+- eyeColorLeft: 왼쪽 눈동자 색상 헥스코드 (예: 에메랄드 #10b981, 호박/골드 #f59e0b, 사파이어 #38bdf8)
+- eyeColorRight: 오른쪽 눈동자 색상 헥스코드 (오드아이라면 왼쪽과 다른 색상, 보통은 같음)
+- noseColor: 코 색상 헥스코드 (핑크는 #f43f5e, 어두운 코는 #3f3f46)
+- hasStripes: 줄무늬(태비)가 뚜렷한지 여부 (boolean)
+- hasBib: 가슴에 흰 털(턱시도 빕)이 있는지 여부 (boolean)
+- hasSocks: 발 끝에 하얀 양말을 신었는지 여부 (boolean)
+- hasBlush: 볼터치 추천 여부 (boolean, 기본 true)
+- aiDescription: 사진 속 고양이의 매력 포인트를 짚어주는 다정하고 사랑스러운 1~2문장의 감정평`,
+              },
+            ],
+          },
+        ],
+        config: {
+          systemInstruction: '당신은 실제 고양이 사진을 보고 가장 사랑스러운 3D 툰 캐릭터 모델로 색상과 특징을 변환하는 전문 3D 아티스트 AI입니다.',
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              breedTag: { type: Type.STRING },
+              suggestedName: { type: Type.STRING },
+              personality: { type: Type.STRING },
+              primaryColor: { type: Type.STRING },
+              stripeColor: { type: Type.STRING },
+              bellyColor: { type: Type.STRING },
+              eyeColorLeft: { type: Type.STRING },
+              eyeColorRight: { type: Type.STRING },
+              noseColor: { type: Type.STRING },
+              hasStripes: { type: Type.BOOLEAN },
+              hasBib: { type: Type.BOOLEAN },
+              hasSocks: { type: Type.BOOLEAN },
+              hasBlush: { type: Type.BOOLEAN },
+              aiDescription: { type: Type.STRING },
+            },
+            required: [
+              'breedTag',
+              'suggestedName',
+              'personality',
+              'primaryColor',
+              'bellyColor',
+              'eyeColorLeft',
+              'eyeColorRight',
+              'aiDescription',
+            ],
+          },
+        },
+      });
+
+      const parsed = JSON.parse(response.text || '{}');
+      return res.json({
+        success: true,
+        data: {
+          breedTag: parsed.breedTag || '나만의 특별한 냥이',
+          suggestedName: parsed.suggestedName || '모찌',
+          personality: ['foodie', 'energetic', 'cuddly', 'zen'].includes(parsed.personality)
+            ? parsed.personality
+            : 'cuddly',
+          primaryColor: parsed.primaryColor || '#f59e0b',
+          stripeColor: parsed.stripeColor || '#d97706',
+          bellyColor: parsed.bellyColor || '#ffffff',
+          eyeColorLeft: parsed.eyeColorLeft || '#10b981',
+          eyeColorRight: parsed.eyeColorRight || parsed.eyeColorLeft || '#10b981',
+          noseColor: parsed.noseColor || '#f43f5e',
+          hasStripes: parsed.hasStripes ?? true,
+          hasBib: parsed.hasBib ?? true,
+          hasSocks: parsed.hasSocks ?? true,
+          hasBlush: parsed.hasBlush ?? true,
+          aiDescription: parsed.aiDescription || '호기심 가득하고 눈빛이 보석처럼 빛나는 사랑스러운 고양이입니다!',
+        },
+      });
+    } catch (err) {
+      console.warn('Gemini vision photo analysis failed, using fallback:', err);
+    }
+  }
+
+  // Fallback if AI key is missing or call fails
+  return res.json({
+    success: true,
+    data: {
+      breedTag: '사진 맞춤 냥이',
+      suggestedName: '보리',
+      personality: 'cuddly',
+      primaryColor: '#f59e0b',
+      stripeColor: '#d97706',
+      bellyColor: '#ffffff',
+      eyeColorLeft: '#10b981',
+      eyeColorRight: '#10b981',
+      noseColor: '#f43f5e',
+      hasStripes: true,
+      hasBib: true,
+      hasSocks: true,
+      hasBlush: true,
+      aiDescription: '동글동글한 볼살과 다정한 눈빛이 매력적인 천사 같은 고양이입니다! 💕',
+    },
+  });
 });
 
 // AI Translation Route for Global Butler Notes
@@ -576,7 +710,10 @@ async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);

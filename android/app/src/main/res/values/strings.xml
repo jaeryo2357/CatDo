@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">냥이투두</string>
+    <string name="app_subtitle">3D 고양이 키우기 &amp; 힐링 투두</string>
+    <string name="widget_name">냥이투두 빠른 할일 위젯</string>
+    <string name="widget_description">홈 화면에서 오늘 할 일을 체크하고 반려묘의 상태를 확인하세요.</string>
+</resources>

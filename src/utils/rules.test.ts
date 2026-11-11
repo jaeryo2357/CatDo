@@ -112,6 +112,7 @@ test('extractInterestTags finds tags from todo titles', () => {
     {
       id: '1',
       title: '리액트 컴포넌트 코딩 및 개발',
+      category: 'study',
       completed: false,
       createdAt: 0,
       analysis: { difficulty: 'medium', difficultyLabel: '', effortValue: 30, rationale: '', catComment: '' }
@@ -119,6 +120,7 @@ test('extractInterestTags finds tags from todo titles', () => {
     {
       id: '2',
       title: '아침 러닝 5km 운동 오운완',
+      category: 'health',
       completed: false,
       createdAt: 0,
       analysis: { difficulty: 'medium', difficultyLabel: '', effortValue: 30, rationale: '', catComment: '' }

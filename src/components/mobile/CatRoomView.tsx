@@ -210,10 +210,11 @@ export const CatRoomView: React.FC<CatRoomViewProps> = ({
           <button
             type="button"
             onClick={onOpenAdoption}
-            className="py-1.5 px-3 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-xs font-bold text-stone-700 flex items-center justify-center gap-1.5 cursor-pointer"
+            className="py-1.5 px-3 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-xs font-bold text-amber-900 flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+            title="실제 사진으로 3D 냥이 만들기 또는 묘종 변경"
           >
-            <RotateCcw className="w-3.5 h-3.5 text-stone-500" />
-            <span>묘종 변경</span>
+            <span>📸</span>
+            <span>사진/묘종 변경</span>
           </button>
         </div>
 

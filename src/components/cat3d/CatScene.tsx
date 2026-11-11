@@ -19,7 +19,9 @@ export const CatScene: React.FC<CatSceneProps> = ({ cat, onPetCat, className = '
   catRef.current = cat;
 
   const modelPartsRef = useRef<CatModelParts | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
   const lastBreedRef = useRef<CatBreedId>(cat.breed);
+  const lastAppearanceKeyRef = useRef<string>(JSON.stringify(cat.customAppearance));
   const lastAccessoryRef = useRef(cat.accessory);
   const actionTimeoutRef = useRef<number | null>(null);
 
@@ -139,8 +141,9 @@ export const CatScene: React.FC<CatSceneProps> = ({ cat, onPetCat, className = '
     scene.add(contactShadow);
 
     // 5. Create Cat 3D Model
-    let catParts = createCat3DModel(catRef.current.breed);
+    let catParts = createCat3DModel(catRef.current.breed, catRef.current.customAppearance);
     modelPartsRef.current = catParts;
+    sceneRef.current = scene;
     scene.add(catParts.root);
     updateCatAccessory(catParts.accessoryGroup, catRef.current.accessory);
 
@@ -166,14 +169,17 @@ export const CatScene: React.FC<CatSceneProps> = ({ cat, onPetCat, className = '
       const rect = container.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera({ x, y }, camera);
-      const intersects = raycaster.intersectObjects([catParts.root], true);
+      mouse.set(x, y);
+      raycaster.setFromCamera(mouse, camera);
+      const currentParts = modelPartsRef.current;
+      if (!currentParts) return;
+      const intersects = raycaster.intersectObjects([currentParts.root], true);
 
       if (intersects.length > 0) {
         onPetRef.current();
 
         // Trigger heart burst
-        const hearts = catParts.heartParticles.children;
+        const hearts = currentParts.heartParticles.children;
         hearts.forEach((h, i) => {
           h.userData.active = true;
           h.userData.progress = (i / hearts.length) * 0.4;
@@ -398,21 +404,34 @@ export const CatScene: React.FC<CatSceneProps> = ({ cat, onPetCat, className = '
     };
   }, []);
 
-  // Sync Breed & Accessory Changes
+  // Sync Breed, Custom Appearance & Accessory Changes
   useEffect(() => {
-    if (!modelPartsRef.current) return;
+    const scene = sceneRef.current;
+    if (!scene) return;
 
-    if (lastBreedRef.current !== cat.breed) {
+    const currentAppearanceKey = JSON.stringify(cat.customAppearance);
+    const breedChanged = lastBreedRef.current !== cat.breed;
+    const appearanceChanged = lastAppearanceKeyRef.current !== currentAppearanceKey;
+
+    if (breedChanged || appearanceChanged) {
+      if (modelPartsRef.current) {
+        scene.remove(modelPartsRef.current.root);
+      }
+      const newParts = createCat3DModel(cat.breed, cat.customAppearance);
+      modelPartsRef.current = newParts;
+      scene.add(newParts.root);
+      updateCatAccessory(newParts.accessoryGroup, cat.accessory);
       lastBreedRef.current = cat.breed;
-      // Recreate model on breed change
-      // Handled cleanly
+      lastAppearanceKeyRef.current = currentAppearanceKey;
+      lastAccessoryRef.current = cat.accessory;
+      return;
     }
 
-    if (lastAccessoryRef.current !== cat.accessory) {
+    if (modelPartsRef.current && lastAccessoryRef.current !== cat.accessory) {
       lastAccessoryRef.current = cat.accessory;
       updateCatAccessory(modelPartsRef.current.accessoryGroup, cat.accessory);
     }
-  }, [cat.breed, cat.accessory]);
+  }, [cat.breed, cat.customAppearance, cat.accessory]);
 
   return (
     <div className={`relative w-full h-full select-none ${className}`}>

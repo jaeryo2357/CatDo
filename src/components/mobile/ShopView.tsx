@@ -28,7 +28,7 @@ export const ShopView: React.FC<ShopViewProps> = ({
             <span className="text-base font-bold text-amber-100">캔</span>
           </div>
           <p className="text-[11px] text-amber-100 mt-1">
-            할일을 완수하고 AI 감정으로 캔을 모아보세요!
+            할일을 완수하고 캔을 모아 냥이를 돌봐주세요!
           </p>
         </div>
 

@@ -595,9 +595,10 @@ export const CatParkScene: React.FC<CatParkSceneProps> = ({
           myModelRef.current.leftEyelid.scale.y = 1.0;
           myModelRef.current.rightEyelid.scale.y = 1.0;
         } else if (myActionRef.current === 'purr') {
-          // Gentle rhythmic vibrating purr
           myModelRef.current.catBodyGroup.position.y = Math.sin(time * 25) * 0.04;
-          myModelRef.current.tailGroup.rotation.z = Math.sin(time * 8) * 0.5;
+          if (myModelRef.current.tailSegments?.[0]) {
+            myModelRef.current.tailSegments[0].rotation.z = Math.sin(time * 8) * 0.5;
+          }
         } else if (myActionRef.current === 'play_yarn') {
           // Playfully batting paws
           myModelRef.current.frontLeftPaw.position.y = Math.abs(Math.sin(time * 10)) * 0.25;

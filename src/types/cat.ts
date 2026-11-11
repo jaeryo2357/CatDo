@@ -1,4 +1,4 @@
-export type CatBreedId = 'cheese' | 'mackerel' | 'tuxedo' | 'calico' | 'white';
+export type CatBreedId = 'cheese' | 'mackerel' | 'tuxedo' | 'calico' | 'white' | 'custom';
 
 export interface CatBreedInfo {
   id: CatBreedId;
@@ -76,6 +76,22 @@ export type CatAccessory = 'none' | 'bell_collar' | 'sunglasses' | 'party_hat' |
 
 export type CatActionAnimation = 'idle' | 'walk' | 'eat' | 'sleep' | 'dance' | 'beg' | 'pet' | 'happy';
 
+export interface CustomCatAppearance {
+  primaryColor: string;
+  stripeColor?: string;
+  bellyColor: string;
+  eyeColorLeft: string;
+  eyeColorRight: string;
+  noseColor?: string;
+  hasStripes?: boolean;
+  hasBib?: boolean;
+  hasSocks?: boolean;
+  hasBlush?: boolean;
+  sourcePhotoUrl?: string;
+  breedTag?: string;
+  aiDescription?: string;
+}
+
 export interface CatState {
   id: string;
   name: string;
@@ -93,6 +109,7 @@ export interface CatState {
   adoptedAt: number;
   lastFedAt: number;
   lastPetAt: number;
+  customAppearance?: CustomCatAppearance;
   // Social Park & Community features
   likesCount?: number;
   interests?: string[];

@@ -186,14 +186,14 @@ export const TodoMobileView: React.FC<TodoMobileViewProps> = ({
             <Star className={`w-3.5 h-3.5 ${quickImportant ? 'fill-amber-500' : ''}`} />
           </button>
 
-          {/* Add / AI Evaluate Button */}
+          {/* Add / Submit Button */}
           <button
             type="submit"
             disabled={!quickTitle.trim() || isAiAnalyzing}
             className="h-9 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white text-xs font-bold shadow-2xs transition-all shrink-0 cursor-pointer flex items-center gap-1"
           >
             {isAiAnalyzing ? (
-              <Sparkles className="w-3.5 h-3.5 animate-spin" />
+              <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
             ) : (
               <Plus className="w-4 h-4 stroke-[2.5]" />
             )}

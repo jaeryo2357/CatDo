@@ -117,16 +117,16 @@ export const StatsView: React.FC<StatsViewProps> = ({
             {totalCoinsEarned.toLocaleString()}
             <span className="text-xs font-normal text-stone-500 ml-1">캔</span>
           </div>
-          <span className="text-[10px] text-stone-400 mt-1">AI 공정 가치 환산치</span>
+          <span className="text-[10px] text-stone-400 mt-1">성취 보상 합계</span>
         </div>
       </div>
 
-      {/* 3. AI Effort Distribution Breakdown */}
+      {/* 3. Task Difficulty Distribution Breakdown */}
       <div className="bg-white rounded-3xl p-5 border border-stone-200 shadow-xs space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="font-extrabold text-sm text-stone-900 flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span>AI 노력 난이도 분석 분포</span>
+            <Trophy className="w-4 h-4 text-amber-500" />
+            <span>완료 작업 난이도 분포</span>
           </h4>
           <span className="text-xs text-stone-500">총 {todos.length}개 작업</span>
         </div>
@@ -204,7 +204,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             )}
           </div>
           <p className="text-[10px] text-stone-400 mt-2">
-            💡 할일 등록 시 AI가 집사님의 관심사를 자동으로 분석하여 산책 광장에 표현해 줍니다.
+            💡 할일을 등록하면 관심사 태그가 정리되어 산책 광장의 다른 집사들과 공유됩니다.
           </p>
         </div>
       </div>

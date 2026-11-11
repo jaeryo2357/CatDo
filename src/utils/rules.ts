@@ -75,10 +75,10 @@ export function calculateLocalEffortFallback(
   };
 
   const rationales: Record<typeof difficulty, string> = {
-    easy: '일상적인 루틴으로 신체적/정신적 부담이 적은 상쾌한 작업입니다.',
-    medium: '목표 지향적 몰입과 30분 이상의 지속적 에너지가 요구되는 알찬 작업입니다.',
-    hard: '상당한 정신적 집중력, 문제 해결력 및 높은 에너지 소모가 수반되는 중요 과제입니다.',
-    extreme: '고도의 인내심과 막대한 노력이 요구되는 최고 난도의 챌린지 과업입니다.',
+    easy: '몸과 마음의 짐을 덜어주는 가볍고 상쾌한 작업이에요.',
+    medium: '차분한 집중과 정성이 담긴 의미 있는 시간이에요.',
+    hard: '많은 에너지와 깊은 몰입이 필요한 중요한 일이에요. 끝내면 큰 보람이 있을 거예요!',
+    extreme: '오늘의 가장 큰 승부처! 무사히 해내고 나면 냥이와 함께 푹 쉬어요.',
   };
 
   return {

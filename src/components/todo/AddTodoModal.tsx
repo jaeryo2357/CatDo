@@ -89,18 +89,18 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
       <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border-2 border-amber-200 overflow-hidden my-6">
         {/* Header */}
-        <div className="px-6 py-4 bg-gradient-to-r from-amber-400 to-orange-400 text-white flex items-center justify-between">
+        <div className="px-6 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-2xl">📝</span>
             <div>
               <h3 className="font-extrabold text-lg">새로운 할일 등록하기</h3>
-              <p className="text-amber-100 text-xs">AI가 노력과 난이도를 감정해 캔 보상을 산정합니다</p>
+              <p className="text-amber-100 text-xs">할 일의 난이도와 노력에 맞춰 냥이 간식(캔) 보상을 드려요</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-white/20 transition-colors text-white"
+            className="p-1.5 rounded-full hover:bg-white/20 transition-colors text-white cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -117,7 +117,7 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
                   key={idx}
                   type="button"
                   onClick={() => handleApplyPreset(p.title, p.category, p.defaultDetail)}
-                  className="px-2.5 py-1 bg-stone-100 hover:bg-amber-100 hover:text-amber-900 text-stone-700 rounded-xl text-xs font-medium transition-colors border border-stone-200/80 flex items-center gap-1"
+                  className="px-2.5 py-1 bg-stone-100 hover:bg-amber-100 hover:text-amber-900 text-stone-700 rounded-xl text-xs font-medium transition-colors border border-stone-200/80 flex items-center gap-1 cursor-pointer"
                 >
                   <span>{p.icon}</span>
                   <span>{p.title}</span>
@@ -150,10 +150,16 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
                 type="button"
                 onClick={() => runAiAnalysis(title, detail, category)}
                 disabled={!title.trim() || isAnalyzing}
-                className="px-3.5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm shrink-0"
+                className="px-3.5 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs shrink-0 cursor-pointer transition-colors"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                {isAnalyzing ? '분석 중...' : 'AI 가치 감정'}
+                {isAnalyzing ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    <span>살펴보는 중...</span>
+                  </>
+                ) : (
+                  <span>난이도 확인</span>
+                )}
               </button>
             </div>
           </div>
@@ -169,7 +175,7 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
                   setCategory(cat);
                   if (title.trim()) runAiAnalysis(title, detail, cat);
                 }}
-                className="w-full px-3 py-2 rounded-xl border-2 border-stone-200 focus:border-amber-500 focus:outline-none text-xs font-semibold bg-white"
+                className="w-full px-3 py-2 rounded-xl border-2 border-stone-200 focus:border-amber-500 focus:outline-none text-xs font-semibold bg-white cursor-pointer"
               >
                 <option value="study">📚 공부 & 학습</option>
                 <option value="work">💼 업무 & 프로젝트</option>
@@ -191,16 +197,15 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
             </div>
           </div>
 
-          {/* AI Effort Valuation Card */}
+          {/* Effort & Reward Card */}
           {analysis && (
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50/70 border-2 border-amber-200/90 rounded-2xl p-4 animate-fade-in shadow-xs">
-              <div className="flex items-center justify-between border-b border-amber-200/60 pb-2.5 mb-2.5">
+            <div className="bg-amber-50/60 border border-amber-200/90 rounded-2xl p-4 animate-fade-in shadow-2xs">
+              <div className="flex items-center justify-between border-b border-amber-200/50 pb-2.5 mb-2.5">
                 <div className="flex items-center gap-2">
-                  <Brain className="w-4 h-4 text-amber-600" />
-                  <span className="text-xs font-extrabold text-stone-800">
-                    AI 노력 가치 감정 완료
+                  <span className="text-xs font-bold text-stone-800">
+                    난이도 확인 완료:
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-800">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-200">
                     {analysis.difficultyLabel}
                   </span>
                 </div>
@@ -216,21 +221,21 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
               <div className="space-y-2 text-xs">
                 {/* Rationale */}
                 <div className="text-stone-700 leading-relaxed">
-                  <strong className="text-stone-800 mr-1">💡 노력 분석:</strong>
+                  <strong className="text-stone-800 mr-1">🐾 집사 응원:</strong>
                   {analysis.rationale}
                 </div>
 
                 {/* Cat Comment */}
-                <div className="p-2.5 bg-white/80 rounded-xl border border-amber-200/60 flex items-start gap-2">
+                <div className="p-2.5 bg-white/90 rounded-xl border border-amber-200/60 flex items-start gap-2 shadow-2xs">
                   <span className="text-base mt-0.5">🐱</span>
-                  <div className="text-amber-900 font-semibold italic text-xs">
+                  <div className="text-amber-950 font-medium italic text-xs leading-relaxed">
                     "{analysis.catComment}"
                   </div>
                 </div>
 
                 {analysis.suggestedPacing && (
-                  <div className="text-[11px] text-stone-500">
-                    ⏱️ <strong>집사 팁:</strong> {analysis.suggestedPacing}
+                  <div className="text-[11px] text-stone-500 pt-0.5">
+                    💡 <strong>작업 팁:</strong> {analysis.suggestedPacing}
                   </div>
                 )}
               </div>
@@ -242,17 +247,17 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-stone-200 text-xs font-bold text-stone-600 hover:bg-stone-50 transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-stone-200 text-xs font-bold text-stone-600 hover:bg-stone-50 transition-colors cursor-pointer"
             >
               닫기
             </button>
             <button
               type="submit"
               disabled={!title.trim() || isAnalyzing}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 text-white text-xs font-extrabold shadow-md shadow-orange-500/20 flex items-center gap-1.5 transition-all"
+              className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-xs font-extrabold shadow-sm flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>할일 등록 및 캔 보상 확정</span>
+              <span>할일 등록하기</span>
             </button>
           </div>
         </form>

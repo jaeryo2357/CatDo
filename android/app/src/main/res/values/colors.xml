@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_amber">#F59E0B</color>
+    <color name="primary_amber_dark">#D97706</color>
+    <color name="accent_warm">#FFFBEB</color>
+    <color name="background_paper">#FAF8F5</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="text_primary">#1C1917</color>
+    <color name="text_secondary">#78716C</color>
+    <color name="status_green">#10B981</color>
+    <color name="status_red">#EF4444</color>
+</resources>
